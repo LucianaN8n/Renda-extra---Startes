@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Plano 7 Dias — Sabaoth</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#F7F6FF;color:#1a1a2e;min-height:100vh}
+.topo{background:#26215C;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.topo-logo{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff}
+.topo-sub{font-size:12px;color:#AFA9EC;margin-top:2px}
+.topo-badge{font-size:11px;color:#F5C842;background:rgba(245,200,66,.12);border:1px solid rgba(245,200,66,.25);border-radius:20px;padding:4px 12px}
+.hero{background:linear-gradient(140deg,#26215C 0%,#534AB7 70%,#7F77DD 100%);padding:44px 24px 52px;text-align:center}
+.hero-label{font-size:11px;color:#F5C842;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;display:block}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(24px,5vw,38px);font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px}
+.hero p{font-size:15px;color:#CECBF6;max-width:500px;margin:0 auto;line-height:1.65}
+.container{max-width:760px;margin:0 auto;padding:28px 20px 60px}
+.card{background:#fff;border:1px solid rgba(83,74,183,.12);border-radius:16px;padding:22px;margin-bottom:16px}
+.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#26215C;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .ic{width:28px;height:28px;background:#EEEDFE;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:500;color:#534AB7;margin-bottom:5px;letter-spacing:.03em}
+.field input,.field select,.field textarea{width:100%;padding:10px 14px;border:1px solid rgba(83,74,183,.2);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a2e;background:#FAFAFE;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#534AB7;background:#fff}
+.field textarea{height:64px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.row2{grid-template-columns:1fr}}
+.perfil-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+@media(max-width:500px){.perfil-grid{grid-template-columns:1fr}}
+.perfil-btn{padding:14px 12px;border:1.5px solid rgba(83,74,183,.2);border-radius:12px;cursor:pointer;background:#FAFAFE;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:#534AB7;text-align:center;transition:all .2s;line-height:1.4}
+.perfil-btn:hover{background:#EEEDFE;border-color:#534AB7}
+.perfil-btn.ativo-iniciante{background:#EEEDFE;border:2px solid #534AB7;color:#26215C}
+.perfil-btn.ativo-criadora{background:#E1F5EE;border:2px solid #1D9E75;color:#04342C}
+.perfil-btn.ativo-especialista{background:#FAEEDA;border:2px solid #BA7517;color:#412402}
+.perfil-btn.ativo-automatizadora{background:#26215C;border:2px solid #26215C;color:#fff}
+.btn-gerar{width:100%;padding:15px;background:#534AB7;color:#fff;border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;letter-spacing:.02em;transition:background .2s}
+.btn-gerar:hover{background:#3C3489}
+.plano-output{display:none;margin-top:28px}
+.plano-output.ativo{display:block}
+.plano-header{border-radius:16px;padding:22px 26px;margin-bottom:14px;color:#fff}
+.escola-tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+.nome-aluna{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:4px}
+.perfil-label{font-size:14px;opacity:.85;margin-bottom:6px}
+.meta-info{font-size:12px;opacity:.7}
+.resultado-box{border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.r-titulo{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.r-meta{font-size:14px;font-weight:700;margin-bottom:8px}
+.resultado-box ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.resultado-box li{font-size:13px;display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+.dia-card{background:#fff;border:1px solid rgba(83,74,183,.1);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.dia-head{display:grid;grid-template-columns:50px 1fr auto;align-items:stretch}
+.dia-num-col{display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;padding:12px 4px;text-align:center}
+.dia-n{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:.05em;line-height:1}
+.dia-n2{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;line-height:1.1}
+.dia-titulo-col{padding:13px 14px;font-size:13px;font-weight:500;color:#26215C;line-height:1.4;display:flex;align-items:center}
+.dia-tempo-col{padding:13px 12px;font-size:11px;color:#888780;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.dia-body{padding:12px 14px;display:flex;flex-direction:column;gap:9px;border-top:1px solid rgba(83,74,183,.07)}
+.tarefa{display:flex;gap:9px;align-items:flex-start}
+.t-num{width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.t-titulo{font-size:13px;font-weight:500;color:#26215C;margin-bottom:2px}
+.t-desc{font-size:12px;color:#5F5E5A;line-height:1.5}
+.template-box{margin:0 14px 12px;border-radius:10px;padding:11px 13px;border-left:3px solid #C8942A;background:#FFFDF5}
+.template-label{font-size:11px;font-weight:700;color:#854F0B;letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+.template-linha{font-size:12px;color:#633806;line-height:1.65}
+.acoes{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.btn-imprimir,.btn-novo{flex:1;min-width:130px;padding:12px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+.btn-imprimir{background:#26215C;color:#fff;border:none}
+.btn-imprimir:hover{background:#534AB7}
+.btn-novo{background:#fff;color:#534AB7;border:1.5px solid #534AB7}
+.btn-novo:hover{background:#EEEDFE}
+.footer{background:#26215C;color:#AFA9EC;text-align:center;padding:18px;font-size:12px;margin-top:40px}
+.footer strong{color:#F5C842}
+.aviso{display:none;background:#FAEEDA;border:1px solid #C8942A;border-radius:10px;padding:10px 14px;font-size:13px;color:#412402;margin-top:10px}
+.aviso.vis{display:block}
+@media print{
+  .topo,.hero,.card,.acoes,.footer,.aviso{display:none!important}
+  .plano-output{display:block!important;margin:0}
+  .dia-card{page-break-inside:avoid}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div>
+    <div class="topo-logo">Sabaoth Cursos e Terapias</div>
+    <div class="topo-sub">Área de Gestão — Renda Extra com IA</div>
+  </div>
+  <span class="topo-badge">✦ Gerador de Planos</span>
+</div>
+
+<div class="hero">
+  <span class="hero-label">Ferramenta interna</span>
+  <h1>Gerador de Plano de Ação 7 Dias</h1>
+  <p>Preencha os dados da aluna e gere o plano personalizado de acordo com o perfil identificado no quiz.</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title"><span class="ic">👤</span> Dados da aluna</div>
+    <div class="field">
+      <label>Nome completo</label>
+      <input type="text" id="nome" placeholder="Ex: Maria Silva">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Meta de renda (R$/mês)</label>
+        <input type="text" id="meta" placeholder="Ex: 1.500">
+      </div>
+      <div class="field">
+        <label>Tempo disponível por dia</label>
+        <select id="tempo">
+          <option value="10 minutos">10 minutos</option>
+          <option value="30 minutos">30 minutos</option>
+          <option value="1 hora" selected>1 hora</option>
+          <option value="2 horas ou mais">2 horas ou mais</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Principal desafio relatado (opcional)</label>
+      <textarea id="desafio" placeholder="Ex: Não sabe por onde começar, medo de se expor..."></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="ic">🎯</span> Perfil identificado no quiz</div>
+    <div class="perfil-grid" id="perfil-grid">
+      <button class="perfil-btn" data-perfil="iniciante">
+        🌱 Iniciante Estratégica<br><span style="font-size:11px;font-weight:400;opacity:.75">Meta: R$500–1.000/mês</span>
+      </button>
+      <button class="perfil-btn" data-perfil="criadora">
+        🎨 Criadora de Conteúdo<br><span style="font-size:11px;font-weight:400;opacity:.75">Meta: R$1.000–3.000/mês</span>
+      </button>
+      <button class="perfil-btn" data-perfil="especialista">
+        💎 Especialista Monetizável<br><span style="font-size:11px;font-weight:400;opacity:.75">Meta: R$3.000–10.000/mês</span>
+      </button>
+      <button class="perfil-btn" data-perfil="automatizadora">
+        🚀 Automatizadora Digital<br><span style="font-size:11px;font-weight:400;opacity:.75">Meta: R$10.000+/mês</span>
+      </button>
+    </div>
+    <div class="aviso" id="aviso-perfil">⚠ Selecione um perfil antes de gerar o plano.</div>
+  </div>
+
+  <button class="btn-gerar" id="btn-gerar">✦ Gerar Plano Personalizado</button>
+
+  <div class="plano-output" id="plano-output">
+    <div class="plano-header" id="ph"></div>
+    <div class="resultado-box" id="rb"></div>
+    <div id="dias-container"></div>
+    <div class="acoes">
+      <button class="btn-imprimir" id="btn-imprimir">🖨 Imprimir / Salvar PDF</button>
+      <button class="btn-novo" id="btn-novo">↩ Gerar novo plano</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>Sabaoth Cursos e Terapias</strong> — Renda Extra com IA — Ferramenta interna de gestão de alunas
+</div>
+
+<script>
+(function(){
+
+var perfilSel = null;
+
+var PERFIS = {
+  iniciante:{
+    label:'🌱 Iniciante Estratégica',cor:'#534AB7',corClaro:'#EEEDFE',corTexto:'#26215C',corNum:'#534AB7',corNumBg:'#EEEDFE',
+    meta:'R$500 a R$1.000 nos próximos 30 dias',
+    resultados:['1 oferta clara e pronta para divulgar','10+ pessoas abordadas no seu círculo','Primeiros 2 a 3 clientes confirmados','Rotina de 10 min/dia instalada'],
+    dias:[
+      {titulo:'Clareza — O que você sabe fazer?',tempo:'10 min',
+       tarefas:[['Liste 10 habilidades','Escreva tudo que você sabe: organizar, ensinar, cuidar, revisar textos, etc.'],['Escolha 1 habilidade','Qual dessas coisas as pessoas MAIS pedem sua ajuda? Essa é a sua oferta.'],['Defina o preço inicial','Pesquise quanto cobram por isso. Coloque um valor justo para começar.']],
+       template:['Anotação de habilidades',['Eu sei fazer bem: _________, _________, _________.','As pessoas mais me pedem ajuda com: _________.','Vou começar cobrando R$_____ por _________.']]},
+      {titulo:'Posicionamento — Para quem você ajuda?',tempo:'10 min',
+       tarefas:[['Defina seu público','Mães? Donas de comércio? Estudantes? Seja específica — não tente atender todo mundo.'],['Monte 1 frase de oferta','Fórmula: Eu ajudo [QUEM] a [RESULTADO] sem [DOR].'],['Coloque na bio do WhatsApp','Atualize sua bio com essa frase hoje mesmo.']],
+       template:['Frase de oferta pronta',['Eu ajudo [mães ocupadas] a [organizar a casa] sem [perder horas planejando].','Adapte para sua realidade e coloque já na bio!']]},
+      {titulo:'Divulgação — Primeiros 10 contatos',tempo:'15 min',
+       tarefas:[['Liste 20 pessoas do seu círculo','Família, amigos, vizinhos, ex-colegas — quem já confia em você.'],['Selecione 10 mais prováveis','Quem mais precisa do que você oferece?'],['Envie a mensagem hoje','Use o template e envie para pelo menos 3 pessoas agora.']],
+       template:['Mensagem de divulgação (WhatsApp)',['Oi [nome]! Estou começando a oferecer [serviço] e pensei em você.','Por [valor], eu [descrição em 1 frase].','Toparia experimentar ou conhece alguém interessado?']]},
+      {titulo:'Objeções — Como responder dúvidas',tempo:'10 min',
+       tarefas:[['Escreva 3 objeções comuns','"É caro", "Não tenho tempo", "Não te conheço bem" — antecipe as dúvidas.'],['Prepare 1 resposta para cada','Reconheça, explique o valor, ofereça solução (teste ou parcelamento).'],['Pratique em voz alta','Fale as respostas até soar natural e confiante.']],
+       template:['Resposta para "Está caro"',['Entendo! Por isso ofereço em [parcelas / versão menor por R$XX].','Você recebe [resultado concreto].','Posso fazer uma sessão de teste para você conhecer?']]},
+      {titulo:'Primeira Venda — Fechar o pedido',tempo:'15 min',
+       tarefas:[['Retorne quem demonstrou interesse','Responda quem perguntou o preço ou ficou em dúvida.'],['Faça uma oferta por tempo limitado','"Tenho 2 vagas essa semana" ou "Preço de inauguração até sexta".'],['Confirme e combine pagamento','PIX, link Mercado Pago ou dinheiro. Não complique na 1ª venda.']],
+       template:['Mensagem de fechamento',['Oi [nome], vi que você se interessou. Ainda tenho 1 vaga essa semana!','Posso garantir seu [serviço] por R$___. Fechamos?','Para confirmar, manda o PIX para: [chave].']]},
+      {titulo:'Entrega e Depoimento',tempo:'10 min',
+       tarefas:[['Entregue com capricho','Mesmo simples, entregue no prazo e supere a expectativa em 1 detalhe.'],['Peça feedback','Pergunte o que achou. Gera melhoria e depoimento.'],['Solicite indicação','Toda cliente satisfeita pode trazer 2 ou 3 novas.']],
+       template:['Pedido de depoimento',['[Nome], que bom que gostou! Podia me contar em 2 linhas o que achou?','Sua opinião me ajuda a melhorar e atingir mais pessoas.','E se conhecer alguém que precise de [serviço], fico feliz com a indicação!']]},
+      {titulo:'Próximos Passos — Escalar a rotina',tempo:'15 min',
+       tarefas:[['Defina sua meta do mês','Quantas vendas? Qual valor total? Escreva e deixe visível.'],['Crie um ritual de 10 min/dia','Horário fixo para divulgar, responder e acompanhar clientes.'],['Planeje a próxima oferta','Com o aprendizado da semana, o que melhorar no próximo mês?']],
+       template:['Meta do mês',['Minha meta: _____ clientes = R$_____ em 30 dias.','Vou dedicar _____ min/dia, sempre às _____ horas.','Meu próximo passo após a 1ª venda: _____.']]},
+    ]
+  },
+  criadora:{
+    label:'🎨 Criadora de Conteúdo',cor:'#1D9E75',corClaro:'#E1F5EE',corTexto:'#04342C',corNum:'#1D9E75',corNumBg:'#E1F5EE',
+    meta:'R$1.000 a R$3.000 nos próximos 30 a 60 dias',
+    resultados:['Nicho e posicionamento definidos','Primeira oferta digital estruturada','7 conteúdos publicados (1 por dia)','Primeira venda ou cliente realizado'],
+    dias:[
+      {titulo:'Nicho — Sobre o que você vai falar?',tempo:'30 min',
+       tarefas:[['Encontre a interseção','O que você sabe + ama + as pessoas pagam. O nicho ideal está aqui.'],['Valide no Google Trends','Pesquise em trends.google.com.br para ver se há interesse crescente.'],['Escolha 1 tema principal','1 tema claro posiciona. Muitos temas confundem.']],
+       template:['Frase de posicionamento',['Eu ajudo [público específico] a [resultado desejado] através de [seu método].','Ex: Eu ajudo mães a criar conteúdo profissional no Canva sem precisar de designer.']]},
+      {titulo:'Perfil — Presença mínima profissional',tempo:'30 min',
+       tarefas:[['Atualize foto e bio','Foto de rosto clara, bio com sua frase de posicionamento e link de contato.'],['Crie um destaque de apresentação','Stories fixados: quem é você, o que faz, para quem, como contratar.'],['Defina a frequência de posts','Comece com 3x por semana. Consistência bate perfeição sempre.']],
+       template:['Bio do Instagram',['🎯 [Frase de posicionamento em 1 linha]','✅ [Resultado que você entrega]','📩 Fale comigo: [link WhatsApp ou email]']]},
+      {titulo:'Conteúdo — Os 3 tipos que vendem',tempo:'30 min',
+       tarefas:[['Conteúdo Educativo (40%)','Ensine algo útil. Gera autoridade e compartilhamentos.'],['Conteúdo de Conexão (40%)','Mostre sua rotina, opinião, bastidores. Gera relacionamento.'],['Conteúdo de Oferta (20%)','Apresente sua solução, resultados e chamada para ação direta.']],
+       template:['Post educativo (carrossel)',['Slide 1: X erros que [público] comete em [tema] — chama atenção','Slides 2-5: 1 erro + solução por slide — gera valor','Slide final: Quer ajuda? Me chama no direct! — CTA']]},
+      {titulo:'Oferta — Seu primeiro produto digital',tempo:'45 min',
+       tarefas:[['Escolha o formato','E-book (R$27–97), Workshop ao vivo (R$47–197) ou Mentoria pontual (R$97–297).'],['Defina o resultado em 1 frase','O cliente compra resultado. "Em 2h você vai aprender a [resultado específico]."'],['Crie a página de venda simples','Google Docs, Canva ou até uma mensagem bem escrita no WhatsApp.']],
+       template:['Descrição de oferta para Stories',['Lancei meu [e-book/workshop] sobre [tema]!','Em [tempo] você vai aprender a [resultado].','Por apenas R$___. Link na bio ou me chama no direct!']]},
+      {titulo:'Lançamento — Divulgar para a audiência',tempo:'30 min',
+       tarefas:[['Faça 3 Stories de aquecimento','Antes de anunciar, gere curiosidade: Estou preparando algo especial...'],['Anuncie no Stories e feed','Publique com preço, resultado e link. Seja direta e confiante.'],['Envie para lista de contatos','Mensagem pessoal para as 10 pessoas mais próximas do seu público.']],
+       template:['Mensagem de lançamento (WhatsApp)',['[Nome], lancei [produto] e pensei em você!','Em [tempo], você aprende a [resultado]. Custa R$___.','Clica aqui: [link]. Só até [data/quantidade]!']]},
+      {titulo:'Conversão — Transformar interesse em venda',tempo:'30 min',
+       tarefas:[['Responda todos os directs em 1h','Velocidade de resposta é decisiva. Quem demora perde a venda.'],['Use a técnica da prova social','Mostre prints de elogios, resultados de clientes, depoimentos reais.'],['Crie urgência real','"Tenho X vagas" ou "Preço sobe em 48h" — funciona se for verdade.']],
+       template:['Resposta para quem perguntou o preço',['Oi [nome]! O [produto] está R$___ até [data].','Você recebe: [3 benefícios principais].','Quer garantir? Te mando o link agora!']]},
+      {titulo:'Análise e Escala — O que funcionou?',tempo:'30 min',
+       tarefas:[['Analise os números','Quantos viram? Quantos clicaram? Quantos compraram? Onde perdi pessoas?'],['Identifique o melhor conteúdo','Qual post teve mais salvamentos ou perguntas? Faça mais desse tipo.'],['Planeje o próximo lançamento','O que lançar, para quem e por quanto no próximo mês?']],
+       template:['Revisão semanal',['Meu conteúdo com mais engajamento: _____','O que funcionou na venda: _____','O que vou melhorar: _____','Meta de vendas para o mês: R$_____']]},
+    ]
+  },
+  especialista:{
+    label:'💎 Especialista Monetizável',cor:'#BA7517',corClaro:'#FAEEDA',corTexto:'#412402',corNum:'#BA7517',corNumBg:'#FAEEDA',
+    meta:'R$3.000 a R$10.000 nos próximos 60 a 90 dias',
+    resultados:['Oferta de consultoria/mentoria precificada','Página de vendas profissional no ar','Primeiros 2 a 3 clientes captados','Sistema de captação recorrente instalado'],
+    dias:[
+      {titulo:'Auditoria — Qual expertise vai monetizar?',tempo:'1 hora',
+       tarefas:[['Liste os 3 problemas que você resolve','Seja específica: não "saúde", mas "mulheres com ansiedade no trabalho".'],['Valide com pesquisa rápida','Pergunte a 5 pessoas: "Você pagaria por ajuda com isso?" Ouça as respostas.'],['Escolha 1 oferta de entrada','Sessão diagnóstico (1h), Consultoria pontual (2h) ou Mentoria de 30 dias.']],
+       template:['Definição de oferta',['Eu ofereço [sessão/mentoria] para [público específico].','Em [tempo], você vai [resultado concreto e mensurável].','Meu investimento é R$_____ por [sessão/mês/programa].']]},
+      {titulo:'Precificação — Cobrar por valor, não por hora',tempo:'1 hora',
+       tarefas:[['Calcule o valor do resultado','Se você ajuda alguém a ganhar R$5.000 a mais, sua consultoria vale 10–30% disso.'],['Pesquise o mercado','Veja quanto cobram especialistas no seu nicho. Posicione-se na faixa média-alta.'],['Crie 2 opções de preço','Ex: Sessão avulsa (R$250) e Pacote 4 sessões (R$800). Dá opção sem intimidar.']],
+       template:['Tabela de preços simples',['SESSÃO DIAGNÓSTICO — 60 min — R$___','Inclui: avaliação completa + plano de ação personalizado','PROGRAMA MENSAL — 4 encontros — R$___','Inclui: sessões semanais + suporte WhatsApp + materiais exclusivos']]},
+      {titulo:'Página de Vendas — Sua vitrine profissional',tempo:'2 horas',
+       tarefas:[['Estruture em 5 blocos','1) Problema, 2) Solução, 3) Sobre você, 4) Depoimentos, 5) CTA com preço.'],['Escreva a headline com dor e resultado','"Pare de [problema] e comece a [resultado] com [seu método]."'],['Publique em plataforma simples','Notion público, Google Sites ou Linktree com descrição detalhada.']],
+       template:['Headline de página de vendas',['Você tem o conhecimento. Falta transformar em clientes e renda previsível.','Em [prazo], eu te ajudo a [resultado específico] — mesmo sem ter cobrado antes.','[Seu nome] | [Sua especialidade] | Atendimento Online']]},
+      {titulo:'Captação — Onde encontrar seus primeiros clientes',tempo:'1 hora',
+       tarefas:[['Mapeie onde seu público está','Grupos do Facebook, LinkedIn, comunidades no WhatsApp, Instagram por nicho.'],['Participe com valor, não com vendas','Responda dúvidas, compartilhe dicas. Autoridade se constrói antes de vender.'],['Aborde 5 pessoas qualificadas hoje','Mensagem pessoal, não spam. Veja o template ao lado.']],
+       template:['Abordagem de captação',['Oi [nome], vi seu post sobre [tema] e me identifiquei muito.','Trabalho ajudando [público] a [resultado]. Seria útil para você?','Posso te mandar mais informações ou agendar uma conversa rápida.']]},
+      {titulo:'Venda — A conversa que fecha clientes',tempo:'1 hora',
+       tarefas:[['Faça uma call de 30 min (gratuita)','Não é um favor — é sua ferramenta de venda. Ouça mais do que fale.'],['Use a estrutura: Dor > Causa > Solução','Deixe a pessoa expressar o problema. Você apresenta o caminho.'],['Apresente a oferta no final','Somente depois de entender o problema, apresente com confiança.']],
+       template:['Roteiro de call (30 min)',['0–5 min: Me conta sobre você e o que te trouxe aqui.','5–20 min: Qual é seu maior desafio com [tema] hoje?','20–25 min: Com base no que me contou, o que eu faria com você seria...','25–30 min: Meu [programa] custa R$___. Quer começar?']]},
+      {titulo:'Recorrência — De 1 cliente para renda mensal',tempo:'1 hora',
+       tarefas:[['Ofereça continuidade ao primeiro cliente','Após a sessão, apresente o pacote mensal. Mais fácil vender para quem já confia.'],['Crie um grupo de acompanhamento','WhatsApp com 5 a 10 clientes pagando mensalidade. Renda previsível.'],['Estruture o programa de continuidade','Encontros mensais + materiais exclusivos + suporte por mensagem.']],
+       template:['Oferta de continuidade',['Que bom que achou útil! Para quem quer continuar evoluindo...','Tenho um grupo mensal de [tema] por R$___/mês.','Você recebe: encontros ao vivo + suporte + materiais. Quer fazer parte?']]},
+      {titulo:'Autoridade — Construir presença que atrai',tempo:'1 hora',
+       tarefas:[['Publique 1 conteúdo de autoridade','Artigo no LinkedIn ou carrossel ensinando algo do seu campo.'],['Colecione e publique depoimentos','Peça para clientes gravarem vídeo ou mandarem texto. Use com permissão.'],['Defina sua rotina de captação semanal','2h/semana em captação ativa + 3 conteúdos = pipeline constante.']],
+       template:['Post de autoridade (LinkedIn)',['[Número] coisas que aprendi ajudando [X] clientes com [problema]:','1. [Lição 1] | 2. [Lição 2] | 3. [Lição 3]','Se você também enfrenta isso, me conta nos comentários.','Trabalho com consultoria em [nicho] — link na bio.']]},
+    ]
+  },
+  automatizadora:{
+    label:'🚀 Automatizadora Digital',cor:'#26215C',corClaro:'#EEEDFE',corTexto:'#26215C',corNum:'#534AB7',corNumBg:'#EEEDFE',
+    meta:'R$10.000+ em 90 dias com sistema escalável',
+    resultados:['Produto/serviço digital escolhido e validado','Estrutura mínima funcionando (página + pagamento)','Primeiras automações ativadas','Funil básico de captação ativo'],
+    dias:[
+      {titulo:'Validação — Escolha 1 ideia e teste antes de automatizar',tempo:'2 horas',
+       tarefas:[['Liste suas 3 ideias de negócio digital','Automação? Infoproduto? Agente de IA? Serviço de funis? Escreva as 3.'],['Aplique o critério MVP','Qual das 3 você pode lançar em 7 dias com o mínimo de recursos?'],['Defina a hipótese de validação','Se conseguir [X] leads ou [Y] vendas em 7 dias, essa ideia tem mercado.']],
+       template:['Critérios de escolha de produto',['[ ] Posso vender/testar isso em menos de 7 dias?','[ ] Já sei exatamente quem é o comprador?','[ ] O preço paga meu tempo de construção em 30 dias?','[ ] Posso automatizar a entrega depois de validar?','3 ou mais SIM = valide essa ideia primeiro.']]},
+      {titulo:'Estrutura Mínima — Página + Pagamento + Entrega',tempo:'3 horas',
+       tarefas:[['Monte a página de captura','Use Typebot, Carrd ou Notion. Não precisa ser perfeita — precisa funcionar.'],['Configure o link de pagamento','Hotmart, Kiwify ou Mercado Pago. Produto criado, preço definido, link gerado.'],['Defina o fluxo de entrega','Email automático? Grupo? Plataforma? O que acontece após o pagamento?']],
+       template:['Fluxo mínimo de venda',['CAPTAÇÃO: Post → Página de captura (Typebot/Carrd)','PAGAMENTO: Link Hotmart/Kiwify/Mercado Pago','ENTREGA: Email automático com acesso OU link do grupo','PÓS-VENDA: Sequência de 3 emails (boas-vindas, dica 1, upsell)']]},
+      {titulo:'Automação 1 — Captura e Qualificação de Leads',tempo:'2 horas',
+       tarefas:[['Configure o Typebot ou ManyChat','Chatbot de qualificação: nome, maior dor, orçamento. Filtra leads automaticamente.'],['Conecte ao seu CRM ou planilha','Zapier ou Make para jogar os dados em uma planilha Google.'],['Ative notificação no WhatsApp','A cada novo lead qualificado, você recebe aviso com os dados principais.']],
+       template:['Fluxo de qualificação (Typebot)',['Msg 1: Qual é seu maior desafio com [tema]?','Msg 2: Você já tentou resolver antes? Como foi?','Msg 3: Qual seu orçamento para resolver isso em 30 dias?','Webhook para planilha + notificação WhatsApp via Make/Zapier']]},
+      {titulo:'Tráfego — Primeiros leads sem pagar caro',tempo:'2 horas',
+       tarefas:[['Tráfego orgânico: 3 posts estratégicos','LinkedIn e Instagram com conteúdo que resolve uma dor específica.'],['Grupos e comunidades','Entre em 5 grupos do Facebook/Telegram. Contribua, não spam.'],['Parceria de indicação','3 pessoas com audiência complementar. Ofereça 20–30% de comissão.']],
+       template:['Post de captação orgânica',['Você sabia que [dado surpreendente sobre o problema que resolve]?','A maioria tenta resolver fazendo [erro comum].','Existe um caminho mais rápido: [sua solução em 1 frase].','Se quiser saber como, clica no link da bio.']]},
+      {titulo:'Automação 2 — Sequência de Emails pós-captura',tempo:'2 horas',
+       tarefas:[['Configure Mailchimp ou RD Station','Crie uma lista e conecte ao formulário de captura.'],['Escreva 3 emails de nurturing','Email 1: Boas-vindas. Email 2: Sua maior dica. Email 3: Apresentação da oferta.'],['Automatize o disparo','Email 1 imediato, Email 2 em 2 dias, Email 3 em 4 dias. Configure uma vez.']],
+       template:['Email 1 — Boas-vindas (automático)',['Assunto: Você chegou no lugar certo, [nome]!','Oi [nome]! Que bom ter você aqui.','Nos próximos dias, vou te mandar [X dicas / material].','Alguma dúvida? Só responder este email.']]},
+      {titulo:'Funil Completo — Conectar todas as peças',tempo:'2 horas',
+       tarefas:[['Mapeie o funil no papel','Anúncio → Página → Captura → Nurturing → Oferta → Venda → Entrega.'],['Teste o fluxo do início ao fim','Faça você mesma o caminho do cliente. Identifique qualquer etapa que quebre.'],['Instale o pixel e tracking','Google Tag Manager + Meta Pixel. Dados desde o início valem ouro.']],
+       template:['Checklist de funil mínimo',['[ ] Página de captura no ar e funcionando','[ ] Link de pagamento testado','[ ] Email de boas-vindas disparando automaticamente','[ ] Dados dos leads chegando na planilha/CRM','[ ] Entrega acontecendo sem ação manual']]},
+      {titulo:'Escala — Da validação para o crescimento',tempo:'2 horas',
+       tarefas:[['Analise os números da semana','Taxa de conversão, custo por lead, abertura dos emails. O que melhorar?'],['Identifique o gargalo principal','Onde você perde mais pessoas? Ali está seu maior potencial.'],['Planeje o próximo nível','Tráfego pago? Novo produto? Afiliados? Defina a próxima alavanca.']],
+       template:['Dashboard semanal',['Visitas na página: _____ | Conversão: _____%','Leads gerados: _____ | Custo por lead: R$_____','Vendas: _____ | Ticket médio: R$_____','Receita total: R$_____ | Meta do mês: R$_____']]},
+    ]
+  }
+};
+
+function selecionarPerfil(btn) {
+  document.querySelectorAll('.perfil-btn').forEach(function(b) {
+    b.className = 'perfil-btn';
+  });
+  perfilSel = btn.getAttribute('data-perfil');
+  btn.classList.add('ativo-' + perfilSel);
+  document.getElementById('aviso-perfil').classList.remove('vis');
+}
+
+function gerarPlano() {
+  if (!perfilSel) {
+    document.getElementById('aviso-perfil').classList.add('vis');
+    return;
+  }
+  var nome = document.getElementById('nome').value.trim() || 'Aluna';
+  var meta = document.getElementById('meta').value.trim();
+  var tempo = document.getElementById('tempo').value;
+  var p = PERFIS[perfilSel];
+
+  var ph = document.getElementById('ph');
+  ph.style.background = p.cor;
+  ph.innerHTML =
+    '<div class="escola-tag">Sabaoth Cursos e Terapias — Renda Extra com IA</div>' +
+    '<div class="nome-aluna">' + nome + '</div>' +
+    '<div class="perfil-label">' + p.label + '</div>' +
+    (meta ? '<div class="meta-info">Meta: R$' + meta + '/mês · Disponível: ' + tempo + '</div>' : '');
+
+  var rb = document.getElementById('rb');
+  rb.style.background = p.corClaro;
+  rb.style.border = '1px solid ' + p.cor + '44';
+  rb.innerHTML =
+    '<div class="r-titulo" style="color:' + p.corNum + '">🏆 Resultado esperado ao final dos 7 dias</div>' +
+    '<div class="r-meta" style="color:' + p.cor + '">' + p.meta + '</div>' +
+    '<ul>' + p.resultados.map(function(r) {
+      return '<li><span style="color:' + p.corNum + ';font-size:15px;flex-shrink:0">✓</span><span style="color:' + p.corTexto + '">' + r + '</span></li>';
+    }).join('') + '</ul>';
+
+  var dc = document.getElementById('dias-container');
+  dc.innerHTML = p.dias.map(function(dia, i) {
+    return '<div class="dia-card">' +
+      '<div class="dia-head">' +
+        '<div class="dia-num-col" style="background:' + p.cor + '">' +
+          '<span class="dia-n">DIA</span>' +
+          '<span class="dia-n2">' + (i + 1) + '</span>' +
+        '</div>' +
+        '<div class="dia-titulo-col">' + dia.titulo + '</div>' +
+        '<div class="dia-tempo-col">⏱ ' + dia.tempo + '</div>' +
+      '</div>' +
+      '<div class="dia-body">' +
+        dia.tarefas.map(function(t, j) {
+          return '<div class="tarefa">' +
+            '<div class="t-num" style="background:' + p.corNumBg + ';color:' + p.corNum + '">' + (j + 1) + '</div>' +
+            '<div><div class="t-titulo">' + t[0] + '</div><div class="t-desc">' + t[1] + '</div></div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      (dia.template ?
+        '<div class="template-box">' +
+          '<div class="template-label">✏ Template: ' + dia.template[0] + '</div>' +
+          dia.template[1].map(function(l) { return '<div class="template-linha">' + l + '</div>'; }).join('') +
+        '</div>' : '') +
+    '</div>';
+  }).join('');
+
+  var out = document.getElementById('plano-output');
+  out.className = 'plano-output ativo';
+  setTimeout(function() {
+    out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
+}
+
+function novoPlano() {
+  document.getElementById('nome').value = '';
+  document.getElementById('meta').value = '';
+  document.getElementById('desafio').value = '';
+  document.getElementById('tempo').selectedIndex = 2;
+  document.querySelectorAll('.perfil-btn').forEach(function(b) {
+    b.className = 'perfil-btn';
+  });
+  perfilSel = null;
+  document.getElementById('plano-output').className = 'plano-output';
+  document.getElementById('aviso-perfil').classList.remove('vis');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.perfil-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { selecionarPerfil(this); });
+  });
+  document.getElementById('btn-gerar').addEventListener('click', gerarPlano);
+  document.getElementById('btn-imprimir').addEventListener('click', function() { window.print(); });
+  document.getElementById('btn-novo').addEventListener('click', novoPlano);
+});
+
+})();
+</script>
+</body>
+</html>
